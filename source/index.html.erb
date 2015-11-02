@@ -1,0 +1,106 @@
+---
+title: Vlang | Verification for nerds
+---
+<div class="row">
+  <div class="col-md-8 col-md-offset-2 columns">
+    <div id="about"> Vlang is an opensource multicore-enabled verification language built on top of the <a href="http://dlang.org"> D Programming Language</a>
+    </div>
+  </div>
+  <div class="col-md-7 columns">
+    <ul class="feature">
+      <li>Complete port of Universal Verification Methodology (UVM)</li>
+      <li>Can coexist with SystemVerilog UVM testbenches</li>
+      <li>ABI Compatibility with C/C++</li>
+      <li>Multi-Core Enabled parallel simulations</li>
+      <li>Seemless integration with SystemVerilog, VHDL and SystemC</li>
+      <li>BDD based constraint solver</li>
+      <li>Multiple Parallel Simulators and Multiple UVM Roots</li>
+      <li>Clean syntax without macros and preprocessing</li>
+      <li>Super fast compilation</li>
+      <li>Presently the only multicore parallel UVM implementation</li>
+      <li>Generic and Generative programming paradigms</li>
+    </ul>
+    <h3>
+      Publications
+    </h3>
+    <ul class="publication">
+      <li><a href="http://vlang.org/dvcon2014.pdf">Introduction to Next Generation Verification Language - Vlang</a>, DVCon Europe 2014, Munich</li>
+      <li><a href="http://vlang.org/fdl2014.pdf">A Dive into Opensource Verification Language, Vlang</a>, FDL 2014, Munich</li>
+    </ul>
+  </div>
+  <div class="col-md-5">
+    <div class=" column">
+      <h4>
+	Example Code Snippet
+      </h4>
+      <% highlight('D') do %>
+@UVM_DEFAULT
+class apb_rw: uvm_sequence_item
+{
+  mixin uvm_object_utils;
+  enum kind_e {READ, WRITE};
+  @rand uint addr;
+  @rand uint wdata;
+  @rand kind_e kind;
+  uint rdata;
+  this(string name = "apb_rw") {
+    super(name);
+  }
+  Constraint! q{
+    addr < 4;
+  } addr_range;
+}
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div id="articles">
+  <h2>Vlang Articles</h2>
+  <% 
+    articles = []
+    featured_articles = []
+    standard_articles = []
+     blog.articles.each do |article|
+      next unless article.data.layout == 'article'
+      if article.data.send(:featured)
+        featured_articles << article
+      else
+        standard_articles << article
+      end
+    end
+    articles.concat featured_articles
+    articles.concat standard_articles
+  %>
+  <% 
+  #articles = articles.sort_by {|obj| 
+  #  obj.data["featured"] = false unless obj.data.has_key?(:featured); # ? true : false 
+  #  return obj.data["featured"]
+  #} 
+  %>
+  <% articles.each_slice(4) do |slice| %>
+    <div class="row">
+      <% slice.each do |article| %>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 columns">
+          <%= link_to(image_tag(article.data.image), article) if article.data.image && article.data.featured %>
+          <!--
+          obj.data.send(:featured) ? true : false
+          obj.data.featured
+          raise
+          -->
+          <div class="blog-post">
+            <h3 class="title"><a href="<%= article.url %>"><%= article.title %></a> <span class="time"><%= article.date.strftime('%b %e %Y') %></span></h3>
+            <!--<time><%= article.date.strftime('%b %e') %></time>-->
+            <p><%= article.summary(200) %></p>
+            <div class="category"><%= article.data.tags.split(", ")[0] %></div>
+            <!--
+            <div class="tags"><%= tag_links(article) %></div>
+            <%= link_to "Read more", article, { class: 'more-link' } %>
+            -->
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
